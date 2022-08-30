@@ -8,6 +8,7 @@ import uuid from 'react-uuid';
 
 function DefaultExample3() {
   const [favorites, setfavorites] = useState([]);
+  //readily fetch user's favorite word(s)
   function getFavourites(endpoint, user_id) {
     fetch(`${endpoint}/${user_id}`, {
         method: "GET",
@@ -19,8 +20,8 @@ function DefaultExample3() {
         return res.json()
     }).then(data => {
         setfavorites([...data])
-        console.log(favorites)
-    })
+
+    }).catch(err => { alert('an error occured\n'+err)});
   }
 
   function del(id) {
@@ -29,17 +30,20 @@ function DefaultExample3() {
       headers: {
           "Content-Type": "application/json",
           "X-Requested-With": "XMLHttpRequest",
-          
+
       },
   }).then((res) =>{
       return res.json()
   }).then(data => {
       // setMessage([data])
+      if(data.message){
       alert(data.message)
-      console.log(data)
+      console.log(data)}else{
+        alert('an error occurred')
+      }
 
-     
-  })
+
+  }).catch(err => { alert('an error occured\n'+err)});
   }
   const tokenId=localStorage.getItem('token')
   console.log(tokenId);
@@ -55,10 +59,10 @@ function DefaultExample3() {
         return res.json()
     }).then(data => {
         if(data.id) {
-         
-          getFavourites('http://127.0.0.1:8000/api/data', data.id) 
+
+          getFavourites('http://127.0.0.1:8000/api/data', data.id)
         }
-    }).catch(e => console.log(e))
+    }).catch(err => { alert('an error occured'+err)});
 
   }
   return (
@@ -66,14 +70,14 @@ function DefaultExample3() {
     <Row>
       <Col sm={8}>
       <ListGroup as="ol" variant="flush">
-      { favorites.map(favorite => 
+      { favorites.map(favorite =>
         <ListGroup.Item
         key={uuid()}
         as="li"
         className="d-flex justify-content-between align-items-start"
       >
         <div className="ms-2 me-auto">
-          <div className="fw-bold">{ favorite.word }</div>
+          <div className="fw-bold">{favorite.word }</div>
         </div>
         <Badge bg="danger" className='point' pill  onClick={() => del(favorite.id)}>
           X

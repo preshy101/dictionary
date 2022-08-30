@@ -10,7 +10,7 @@ import React, { useEffect, useState } from 'react';
 function NavScrollExample() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [names, setNames] = useState();
- 
+
  const tokenId=localStorage.getItem('token')
  console.log(tokenId);
  if(tokenId)
@@ -23,13 +23,13 @@ function NavScrollExample() {
         },
     }).then((res) =>{
         return res.json()
-    }).then(data => {   
+    }).then(data => {
       console.log(data)
         if(data.id) {
           setIsLoggedIn(true)
          setNames(data.name)
         }
-    }).catch(e => console.log(e))
+    }).catch(err => { alert('an error occured\n'+err)});
 
   }
   return (
@@ -44,7 +44,7 @@ function NavScrollExample() {
             navbarScroll
           >
           {isLoggedIn && <Link to='/Favorites'   >favorites</Link> }
-            
+
 
           </Nav>
           <Form className="d-flex">
@@ -57,7 +57,7 @@ function NavScrollExample() {
           }
           {
              isLoggedIn &&<div >
-               
+
             <Stack direction="horizontal" gap={3}>
             <Button   variant="btn btn-light" >{names} </Button>
 
@@ -68,9 +68,9 @@ function NavScrollExample() {
         </Navbar.Collapse>
       </Container>
     </Navbar>
-  
-  ); 
-  
+
+  );
+
 }
 
 export default NavScrollExample;

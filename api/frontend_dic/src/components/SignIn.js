@@ -9,11 +9,11 @@ import React, { useState } from 'react';
 function DefaultExample2() {
     const [emails, setEmails] = useState('');
     const [passwords, setPasswords] = useState('');
-    console.log(emails)
-   
+
+
     const Login = (e) => {
         e.preventDefault();
-   
+
         fetch("http://127.0.0.1:8000/api/login", {
             method: "POST",
             headers: {
@@ -28,14 +28,19 @@ function DefaultExample2() {
         }).then((res) =>{
             return res.json()
         }).then(data => {
+
+            if(data.user){
              alert('Logined in successfully \nPlease on click on dictionary to return home')
-            console.log(data)   
-            localStorage.setItem('token',data.token) 
-            localStorage.setItem('name',data.user.name) 
+            // save to localstorage for retrievals
+            localStorage.setItem('token',data.token)
+            localStorage.setItem('name',data.user.name)
+        }else{
+            alert(data.message)
+        }
         });
-      
-    
-}  
+
+
+}
   return (
     <Container>
        <Row>
@@ -46,9 +51,9 @@ function DefaultExample2() {
         <Form.Label>Email</Form.Label>
         <Form.Control
          type="email"
-          placeholder="Enter email" 
+          placeholder="Enter email"
           value={emails}
-           
+
            onChange={(e) => setEmails(e.target.value)}
           required/>
 
@@ -56,9 +61,9 @@ function DefaultExample2() {
       <Form.Group className="mb-3" controlId="formBasicPasswordS">
         <Form.Label>Password</Form.Label>
         <Form.Control type="password"
-         placeholder="Password" 
+         placeholder="Password"
          value={passwords}
-           
+
            onChange={(e) => setPasswords(e.target.value)}
           required/>
       </Form.Group>
@@ -66,9 +71,9 @@ function DefaultExample2() {
       <Button variant="primary" type="submit" onClick={Login}>
         Sign in
       </Button>
-      
+
     </Form>
-    </Col> 
+    </Col>
 </Row>
   </Container>
 

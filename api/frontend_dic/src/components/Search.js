@@ -10,14 +10,17 @@ import uuid from 'react-uuid';
 
 
 const GridBasicExample=()=> {
-     
+
     const [words, setWord] = useState('');
     const [definitionss, setdefinitions] = useState([  ]);
 
+    function getMinDiff(startTimeStamp, endTimeStamp) {
+        const msInMinute = 60 * 1000;
 
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    
-    
+        return Math.floor(
+            Math.abs(new Date(endTimeStamp) - new Date(startTimeStamp)) / msInMinute
+        )
+    }
     const Go = (e) => {
         e.preventDefault();
         const options = {
@@ -27,27 +30,64 @@ const GridBasicExample=()=> {
                 'X-RapidAPI-Host': 'wordsapiv1.p.rapidapi.com'
             }
         };
-        
-        fetch('https://wordsapiv1.p.rapidapi.com/words/'+words+'/definitions', options)
+
+        const fetchWordMeaning = () => {
+            fetch('https://wordsapiv1.p.rapidapi.com/words/'+words+'/definitions', options)
             .then(response => response.json())
             .then(response => {
                 setdefinitions([...response.definitions])
                 // if(localStorage.getItem('searched')) {
                 //     let searched = JSON.parse(localStorage.getItem('searched'));
                 // } else {
-                     
+
                 // }
-                
+
             })
-            .catch(err => console.error(err));
+            .catch(err => { alert('an error occured; check internet connection\n'+err)});
             console.log(definitionss);
+
     }
+        if(localStorage.getItem('searched')) {
+            let searched = JSON.parse(localStorage.getItem('searched'));
+            if(searched.length > 1) {
+                console.log('greater than one')
+                let last_entry = searched[searched.length -1];
+                if(getMinDiff(last_entry, Number(new Date())) < 2) {
+                    console.log('not pass two mins')
+                    alert(`Please you must wait for extra ${2 - getMinDiff(last_entry, Number(new Date()))}minute${(2 - getMinDiff(last_entry, Number(new Date())) > 1 ? 's' : '')} before making another search`);
+                    return;
+                } else {
+                    // send request
+                    fetchWordMeaning();
+                    console.log('pass two mins')
+                    let searched = [
+                        Number(new Date())
+                     ]
+                     localStorage.setItem('searched', JSON.stringify(searched))
+                }
+                console.log(last_entry)
+            } else {
+                fetchWordMeaning();
+                console.log('just on item')
+                let searched = JSON.parse(localStorage.getItem('searched'));
+                searched.push(Number(new Date()))
+                localStorage.setItem('searched', JSON.stringify(searched))
+            }
+        } else {
+            fetchWordMeaning();
+             let searched = [
+                Number(new Date())
+             ]
+             localStorage.setItem('searched', JSON.stringify(searched))
+             console.log(searched);
+        }}
+
     // add to favorite DB
     const Fav = (e) => {
-       
+
         e.preventDefault();
     function addFavourites(endpoint, user_id) {
-         
+
         fetch(`${endpoint}`, {
             method: "POST",
             headers: {
@@ -61,15 +101,15 @@ const GridBasicExample=()=> {
         }).then((res) =>{
             return res.json()
         }).then(data => {
- 
+
             console.log(data)
             alert(data.message)
-        })
-      
-    }   
+        }).catch(err => { alert('an error occured'+err)});
+
+    }
 
     const tokenId=localStorage.getItem('token')
-    alert(tokenId)
+
  if(tokenId){
     fetch('http://127.0.0.1:8000/api/user', {
         method: "GET",
@@ -83,8 +123,8 @@ const GridBasicExample=()=> {
     }).then(data => {
         if(data.id){
                     console.log(data.id)
-                  
-        addFavourites('http://127.0.0.1:8000/api/add', data.id) 
+
+        addFavourites('http://127.0.0.1:8000/api/add', data.id)
         }
 
     })}else{
@@ -92,7 +132,7 @@ const GridBasicExample=()=> {
     }
 
     }
-   
+
    //get users favourites
     function getFavourites(endpoint, user_id) {
         fetch(`${endpoint}/${user_id}`, {
@@ -105,7 +145,7 @@ const GridBasicExample=()=> {
             return res.json()
         }).then(data => {
             console.log(data)
-        })
+        }).catch(err => { alert('an error occured'+err)});
     }
     const tokenId=localStorage.getItem('token')
     console.log(tokenId);
@@ -121,8 +161,8 @@ const GridBasicExample=()=> {
         return res.json()
     }).then(data => {
         console.log(data.id)
-        getFavourites('http://127.0.0.1:8000/api/data', data.id) 
-    })
+        getFavourites('http://127.0.0.1:8000/api/data', data.id)
+    }).catch(err => { alert('an error occured'+err)});
 }
 
   return (
@@ -153,14 +193,14 @@ const GridBasicExample=()=> {
         words &&   <div><Button variant="btn btn-light btn-lg" onClick={Fav}>Add to favorite</Button>
          </div>}
         <Card.Text>
-     
+
             {
                 definitionss.map(definitions =>
-                     
-                 <ul key={uuid()}><li >{definitions.definition}<br></br></li> {definitions.partOfSpeech}</ul>)       
+
+                 <ul key={uuid()}><li >{definitions.definition}<br></br></li> {definitions.partOfSpeech}</ul>)
             }
-        
-            
+
+
 
         </Card.Text>
 

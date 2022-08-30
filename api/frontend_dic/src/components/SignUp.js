@@ -10,9 +10,11 @@ function DefaultExample() {
   const [names, setNames] = useState('');
   const [emails, setEmails] = useState('');
     const [passwords, setPasswords] = useState('');
+
+    //method to singn up user
     const Signup = (e) => {
       e.preventDefault();
- 
+
       fetch("http://127.0.0.1:8000/api/register", {
           method: "POST",
           headers: {
@@ -28,14 +30,18 @@ function DefaultExample() {
       }).then((res) =>{
           return res.json()
       }).then(data => {
-           alert('Signed up successfully \nPlease on click on dictionary to return home')
-          console.log(data)   
-          localStorage.setItem('token',data.token) 
-            localStorage.setItem('name',data.user.name)       
+        if(data.user){
+            alert('Signed in successfully \nPlease on click on dictionary to return home')
+// save to localstorage for retrievals
+           localStorage.setItem('token',data.token)
+           localStorage.setItem('name',data.user.name)
+       }else{
+           alert(data.message)
+       }
       });
-    
-  
-}  
+
+
+}
 
   return (
     <Container>
@@ -44,7 +50,7 @@ function DefaultExample() {
 <Form>
       <Form.Group className="mb-3" controlId="formBasicName">
         <Form.Label>Name</Form.Label>
-        <Form.Control type="text" 
+        <Form.Control type="text"
           value={names}
            onChange={(e) => setNames(e.target.value)}
           required
@@ -56,7 +62,7 @@ function DefaultExample() {
         <Form.Label>Email</Form.Label>
         <Form.Control type="email"
           value={emails}
-           
+
            onChange={(e) => setEmails(e.target.value)}
           required
          placeholder="Enter email" />
@@ -66,7 +72,7 @@ function DefaultExample() {
         <Form.Label>Password</Form.Label>
         <Form.Control type="password"
           value={passwords}
-           
+
            onChange={(e) => setPasswords(e.target.value)}
           required
          placeholder="Password" />
