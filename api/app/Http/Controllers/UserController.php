@@ -13,7 +13,6 @@ class UserController extends Controller
         $rules=array(
             "email"=>"required",
             "password"=>"required"
-
         );
         $validator= Validator::make($request->all(),$rules);
         if (!$validator){
@@ -25,14 +24,14 @@ class UserController extends Controller
                 'message' => ['These credentials do not match our records.']
             ],404);
         }
-        // $token = $user->createToken('my-app-token')->plainTextToken;
-        // $response = [
-        //     'user' =>$user,
-        //     'token'=>$token
-        // ];
-        // return response($response , 201);
+        $token = $user->createToken($request->device_name)->plainTextToken;
+        $response = [
+            'user' =>$user,
+            'token'=>$token
+        ];
+        return response($response , 201);
 
-        return $user->createToken($request->device_name)->plainTextToken;
+        // return $user->createToken($request->device_name)->plainTextToken;
         }
 
     }
@@ -55,7 +54,7 @@ class UserController extends Controller
             $user->password = Hash::make($request->password);
             $user->save();
             // return response()->json(['message'=>'User created successfully '],200);
-            $token = $user->createToken('my-app-token')->plainTextToken;
+            $token = $user->createToken($request->device_name)->plainTextToken;
             $response = [
                 'user' =>$user,
                 'token'=>$token

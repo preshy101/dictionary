@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 use App\Models\Favorites;
 use Illuminate\Http\Request;
 class FavoritesController extends Controller{
-    public function getData(){
-        return Favorites::all();
+    public function getData($user_id){
+        $result = Favorites::where('user_id', $user_id)->get();
+        return $result;
         // return Favorites::select('word')->where(auth()->id())->get();
 
     }

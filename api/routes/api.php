@@ -16,9 +16,9 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::get("data",[FavoritesController::class,'getData']);
+Route::get("data/{user_id}",[FavoritesController::class,'getData']);
 Route::post('add',[FavoritesController::class, 'store']);
-Route::delete('delete/{id}',[FavoritesController::class, 'delete']);
+Route::delete('favorite/delete/{id}',[FavoritesController::class, 'delete']);
 
 Route::post('login',[UserController::class,'index']);
 Route::post('register',[UserController::class,'register']);
@@ -26,3 +26,5 @@ Route::post('register',[UserController::class,'register']);
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+// Route::middleware('auth:sanctum')->delete('favorite/delete/{id}', [FavoritesController::class, 'delete']);
